@@ -15,6 +15,7 @@ Pre-requisites
 --------------
 - aws cli is configured and has credentials to access ap-northeast-1
 - AWS API is reachable
+- ~/.boto contains your AWS access key and AWS secret key
 - Ansible 2.2 or later is installed
 - SSH access is open to AWS IPs
 
