@@ -1,0 +1,38 @@
+---
+ # Provision our instances
+ - hosts: localhost
+   connection: local
+   gather_facts: false
+   user: root
+   pre_tasks:
+    - include_vars: vars/django_vars.yml
+   roles:
+    - provision-ec2
+
+ 
+ # Make sure Python is on all ec2 instances we added to inventory
+ - hosts: all:!localhost
+   gather_facts: false
+   pre_tasks:
+    - include_vars: vars/django_vars.yml
+   remote_user: ubuntu
+   become: yes
+   become_user: root
+   tasks:
+   - name: install python 2
+     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+ # On our instances tagged for django, install our app stack
+ - hosts: tag_Type_django
+   gather_facts: true
+   pre_tasks:
+    - include_vars: vars/django_vars.yml
+   remote_user: ubuntu
+   become: yes
+   become_user: root
+   vars:
+      update_apt_cache: yes
+   roles:
+      - base
+      - django
+      - nginx

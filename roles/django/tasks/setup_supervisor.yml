@@ -1,0 +1,16 @@
+---
+- name: Ensusre Supervisor service is installed
+  apt: name='supervisor'
+       update_cache={{ update_apt_cache }} 
+       state=installed 
+
+- name: Ensure Supervisor service is running
+  service: name=supervisor state=started enabled=yes
+
+- name: Create Supervisor config file
+  template: src=supervisor_config.j2
+            dest=/etc/supervisor/conf.d/{{ application_name }}.conf
+            backup=yes
+
+- name: Re-read Supervisor config files
+  supervisorctl: name={{ application_name }} state=present
